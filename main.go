@@ -2,20 +2,19 @@ package main
 
 import (
 	"bufio"
+	"container/list"
 	"fmt"
 	"io"
 	"os"
-	"strings"
 
 	"github.com/kechako/mktree/node"
 )
 
 var (
-	lineVerticalAndRight = "\u251c"
-	lineUpAndRight       = "\u2514"
-	lineHorizontal       = "\u2500"
-	lineVertical         = "\u2502"
-	lineSpace            = "\u00a0"
+	lineBranching = "\u251c\u2500\u2500\u0020"
+	lineTerminal  = "\u2514\u2500\u2500\u0020"
+	lineVertical  = "\u2502\u00a0\u00a0\u0020"
+	lineSpaces    = "\u0020\u0020\u0020\u0020"
 )
 
 func _main() (int, error) {
@@ -63,52 +62,34 @@ func _main() (int, error) {
 }
 
 func printNode(n *node.Node) {
-	var texts []string
-	texts = append(texts, n.Text())
+	outputs := list.New()
+
+	outputs.PushBack(n.Text() + "\n")
 
 	if n.Parent() == nil {
 		// Do nothing
 	} else if n.Next() != nil {
-		texts = append(texts, " ")
-		texts = append(texts, lineHorizontal)
-		texts = append(texts, lineHorizontal)
-		texts = append(texts, lineVerticalAndRight)
+		outputs.PushBack(lineBranching)
 	} else {
-		texts = append(texts, " ")
-		texts = append(texts, lineHorizontal)
-		texts = append(texts, lineHorizontal)
-		texts = append(texts, lineUpAndRight)
+		outputs.PushBack(lineTerminal)
 	}
 
 	for p := n.Parent(); p != nil; p = p.Parent() {
 		if p.Parent() == nil {
 			// Do nothing
 		} else if p.Next() != nil {
-			texts = append(texts, " ")
-			texts = append(texts, lineSpace)
-			texts = append(texts, lineSpace)
-			texts = append(texts, lineVertical)
+			outputs.PushBack(lineVertical)
 		} else {
-			texts = append(texts, " ")
-			texts = append(texts, " ")
-			texts = append(texts, " ")
-			texts = append(texts, " ")
+			outputs.PushBack(lineSpaces)
 		}
 	}
 
-	reverse(texts)
-	fmt.Println(strings.Join(texts, ""))
+	for e := outputs.Back(); e != nil; e = e.Prev() {
+		fmt.Print(e.Value)
+	}
 
 	for c := n.FirstChild(); c != nil; c = c.Next() {
 		printNode(c)
-	}
-}
-
-func reverse(t []string) {
-	l := len(t)
-	mid := l / 2
-	for i := 0; i < mid; i++ {
-		t[i], t[l-i-1] = t[l-i-1], t[i]
 	}
 }
 
