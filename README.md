@@ -1,5 +1,7 @@
 # mktree
 
+mkdtree displays texts of indented in a tree-like format.
+
 ## Install
 
 ``` sh
