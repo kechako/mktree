@@ -56,12 +56,15 @@ func _main() (int, error) {
 		return 2, fmt.Errorf("Scan error : %v", s.Err())
 	}
 
-	printNode(root)
+	w := bufio.NewWriter(os.Stdout)
+	defer w.Flush()
+
+	printNode(root, w)
 
 	return 0, nil
 }
 
-func printNode(n *node.Node) {
+func printNode(n *node.Node, w io.Writer) {
 	outputs := list.New()
 
 	outputs.PushBack(n.Text() + "\n")
@@ -85,11 +88,11 @@ func printNode(n *node.Node) {
 	}
 
 	for e := outputs.Back(); e != nil; e = e.Prev() {
-		fmt.Print(e.Value)
+		fmt.Fprint(w, e.Value)
 	}
 
 	for c := n.FirstChild(); c != nil; c = c.Next() {
-		printNode(c)
+		printNode(c, w)
 	}
 }
 
