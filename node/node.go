@@ -25,10 +25,13 @@ type Node struct {
 }
 
 func New(s string) *Node {
-	text, i := trimIndent(s)
+	return NewIndent(trimIndent(s))
+}
+
+func NewIndent(text string, indent int) *Node {
 	return &Node{
 		text:   text,
-		indent: i,
+		indent: indent,
 	}
 }
 
