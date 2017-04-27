@@ -1,6 +1,18 @@
 package node
 
-import "strings"
+import (
+	"container/list"
+	"fmt"
+	"io"
+	"strings"
+)
+
+var (
+	lineBranching = "\u251c\u2500\u2500\u0020"
+	lineTerminal  = "\u2514\u2500\u2500\u0020"
+	lineVertical  = "\u2502\u00a0\u00a0\u0020"
+	lineSpaces    = "\u0020\u0020\u0020\u0020"
+)
 
 type Node struct {
 	text   string
@@ -109,4 +121,36 @@ func trimIndent(s string) (string, int) {
 		}
 		return false
 	}), i
+}
+
+func (n *Node) Print(w io.Writer) {
+	outputs := list.New()
+
+	outputs.PushBack(n.Text() + "\n")
+
+	if n.Parent() == nil {
+		// Do nothing
+	} else if n.Next() != nil {
+		outputs.PushBack(lineBranching)
+	} else {
+		outputs.PushBack(lineTerminal)
+	}
+
+	for p := n.Parent(); p != nil; p = p.Parent() {
+		if p.Parent() == nil {
+			// Do nothing
+		} else if p.Next() != nil {
+			outputs.PushBack(lineVertical)
+		} else {
+			outputs.PushBack(lineSpaces)
+		}
+	}
+
+	for e := outputs.Back(); e != nil; e = e.Prev() {
+		fmt.Fprint(w, e.Value)
+	}
+
+	for c := n.FirstChild(); c != nil; c = c.Next() {
+		c.Print(w)
+	}
 }
