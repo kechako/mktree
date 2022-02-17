@@ -16,7 +16,7 @@ func _main() (int, error) {
 	if len(args) > 0 {
 		file, err := os.Open(args[0])
 		if err != nil {
-			return 1, fmt.Errorf("Could not open the file : %s", args[0])
+			return 1, fmt.Errorf("could not open the file : %s", args[0])
 		}
 		defer file.Close()
 		r = file
@@ -45,7 +45,7 @@ func _main() (int, error) {
 		current = n
 	}
 	if s.Err() != nil {
-		return 2, fmt.Errorf("Scan error : %v", s.Err())
+		return 2, fmt.Errorf("scan error : %v", s.Err())
 	}
 
 	w := bufio.NewWriter(os.Stdout)
