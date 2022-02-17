@@ -48,6 +48,10 @@ func _main() (int, error) {
 		return 2, fmt.Errorf("scan error : %v", s.Err())
 	}
 
+	if root == nil {
+		return 0, nil
+	}
+
 	w := bufio.NewWriter(os.Stdout)
 	defer w.Flush()
 
